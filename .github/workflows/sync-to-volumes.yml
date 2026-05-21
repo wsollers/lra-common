@@ -1,0 +1,56 @@
+# =============================================================
+# .github/workflows/sync-to-volumes.yml
+# Syncs common/ and bibliography/ to all lra-volume-N repos
+# whenever they change in lra-common.
+#
+# Requirements:
+#   Create a GitHub Personal Access Token (PAT) with repo scope
+#   and add it as a repository secret named SYNC_PAT in lra-common.
+# =============================================================
+
+name: Sync common to volume repos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'common/**'
+      - 'bibliography/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        volume: [lra-volume-i, lra-volume-ii, lra-volume-iii, lra-volume-iv, lra-volume-v]
+
+    steps:
+      - name: Checkout lra-common
+        uses: actions/checkout@v4
+        with:
+          path: source
+
+      - name: Checkout target volume repo
+        uses: actions/checkout@v4
+        with:
+          repository: wsollers/${{ matrix.volume }}
+          token: ${{ secrets.SYNC_PAT }}
+          path: target
+
+      - name: Sync common/ directory
+        run: |
+          rsync -av --delete source/common/ target/common/
+
+      - name: Sync bibliography/ directory
+        run: |
+          rsync -av --delete source/bibliography/ target/bibliography/ || true
+
+      - name: Commit and push if changed
+        run: |
+          cd target
+          git config user.name  "lra-sync-bot"
+          git config user.email "sync-bot@noreply.github.com"
+          git add common/ bibliography/ || true
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore: sync common/ from lra-common"
+          git push
