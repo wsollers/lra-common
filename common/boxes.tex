@@ -1,0 +1,51 @@
+% ============================================================
+% Colours, boxes, and links
+% ============================================================
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% ============================================================
+% TikZ
+% ============================================================
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{
+  arrows.meta,
+  backgrounds,
+  calc,
+  decorations.pathreplacing,
+  decorations.pathmorphing,
+  decorations.markings,
+  fit,
+  patterns,
+  positioning,
+  shapes.geometric
+}
+
+% ============================================================
+% Miscellaneous
+% ============================================================
+\usepackage{etoolbox}
+\usepackage{expl3}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{multicol}
+\usepackage{placeins}
+\usepackage{xparse}
+\usepackage{multirow}
+\usepackage{rotating}   % sidewaysfigure
+
+% ============================================================
+% Bibliography
+% ============================================================
+\usepackage[authoryear]{natbib}
+
+
+
+\usepackage{imakeidx}
+\makeindex[name=tech,title={Technique Index}]
+\makeindex[name=dep,title={Dependency Index}]
+
+\input{common/exercise-format}
