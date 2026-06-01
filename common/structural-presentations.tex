@@ -3,18 +3,19 @@
 % Extraction markers: signature, structure, classification, proof-vault-url
 % ============================================================
 
-% Structural toolkit: chapter-front and section-front model/signature summaries.
+% Structural toolkit: compact navigational summary for section-level vocabulary.
 \newtcolorbox{toolkitbox}[1]{
   enhanced,
   breakable,
   colback=gray!6,
   colframe=gray!40,
   coltitle=black,
-  fonttitle=\small\bfseries,
-  title={\small\textbf{#1}},
+  colbacktitle=gray!18!white,
+  fonttitle=\bfseries,
+  title={#1},
   boxrule=0.8pt,
   arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
   before skip=8pt, after skip=8pt
 }
 
