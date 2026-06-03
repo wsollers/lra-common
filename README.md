@@ -2,7 +2,8 @@
 
 Shared LaTeX infrastructure for the **Learning Real Analysis** project.
 
-This repository contains the common preamble, macros, color definitions, environments, and bibliography that are shared across all volume repositories.
+This repository contains the common preamble, macros, color definitions, and
+environments that are shared across all volume repositories.
 
 ## Contents
 
@@ -15,30 +16,26 @@ common/
   macros.tex           — proof macros, flash macros, citation helpers
   volume-preamble.tex  — inputs all of the above; used by every volume-N-main.tex
   exercise-format.tex  — exercise record stubs and tag macros
-bibliography/
-  volume-*.bib         — canonical split bibliography by volume
-  general-reference.bib
-  analysis.bib         — legacy pointer only; do not add entries here
 images/                — shared figures and images
 scripts/
-  check_bibliography.py — duplicate check and source lookup helper
+  check_bibliography.py — legacy duplicate check and source lookup helper
 ```
 
 ## Bibliography workflow
 
-Add bibliography entries only in `lra-common`. For phone photos, screenshots,
-OCR output, or extractor candidates, follow
-`docs/workflows/bibliography-entry.md`: search first, add the entry to the
-single canonical split `.bib` file, run `python scripts/check_bibliography.py`,
-then commit and push.
+Bibliography entries are no longer owned by `lra-common`. Add and maintain
+entries in the owning `lra-volume-*` repository's volume bibliography shard.
+The volume sync workflow copies that shard into `Learning-Real-Analysis`.
 
 ## How volume repos use this
 
-Each `lra-volume-N` repo contains a copy of `common/` and `bibliography/` that is kept in sync via a GitHub Actions workflow. The volume repos are self-contained so they can be linked directly to Overleaf.
+Each `lra-volume-N` repo contains a copy of `common/` kept in sync via a
+GitHub Actions workflow. Volume bibliography files are volume-owned so the
+volume repos remain self-contained for Overleaf.
 
 ## Sync workflow
 
-When this repo changes, the GitHub Actions workflow `.github/workflows/sync-to-volumes.yml` pushes updated files to each volume repo and to the monorepo automatically.
+When this repo changes, the GitHub Actions workflow `.github/workflows/sync-to-volumes.yml` pushes updated `common/` files to each volume repo and to the monorepo automatically.
 
 ## Canonical sources
 

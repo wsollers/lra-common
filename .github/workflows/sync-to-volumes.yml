@@ -1,6 +1,6 @@
 # =============================================================
 # .github/workflows/sync-to-volumes.yml
-# Syncs common/ and bibliography/ to all lra-volume-N repos and the monorepo
+# Syncs common/ to all lra-volume-N repos and the monorepo
 # whenever they change in lra-common.
 #
 # Requirements:
@@ -15,7 +15,6 @@ on:
     branches: [main]
     paths:
       - 'common/**'
-      - 'bibliography/**'
 
 jobs:
   sync:
@@ -42,16 +41,12 @@ jobs:
         run: |
           rsync -av --delete source/common/ target/common/
 
-      - name: Sync bibliography/ directory
-        run: |
-          rsync -av --delete source/bibliography/ target/bibliography/ || true
-
       - name: Commit and push if changed
         run: |
           cd target
           git config user.name  "lra-sync-bot"
           git config user.email "sync-bot@noreply.github.com"
-          git add common/ bibliography/ || true
+          git add common/
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore: sync common/ from lra-common"
           git push
@@ -75,16 +70,12 @@ jobs:
         run: |
           rsync -av --delete source/common/ target/common/
 
-      - name: Sync bibliography/ directory
-        run: |
-          rsync -av --delete source/bibliography/ target/bibliography/
-
       - name: Commit and push if changed
         run: |
           cd target
           git config user.name  "lra-sync-bot"
           git config user.email "sync-bot@noreply.github.com"
-          git add common/ bibliography/
+          git add common/
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore: sync common/ from lra-common"
           git push

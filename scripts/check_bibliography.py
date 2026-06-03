@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check split LRA BibTeX files for duplicate keys and likely duplicate works."""
+"""Check volume BibTeX files for duplicate keys and likely duplicate works."""
 
 from __future__ import annotations
 
@@ -66,7 +66,7 @@ def load_entries(bib_dir: Path):
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Check the split LRA bibliography.")
+    parser = argparse.ArgumentParser(description="Check a volume-owned LRA bibliography shard.")
     parser.add_argument("--bib-dir", default="bibliography", help="Directory containing .bib files.")
     parser.add_argument("--find", help="Case-insensitive search over keys, titles, authors, years, and bodies.")
     args = parser.parse_args()
