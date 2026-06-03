@@ -109,18 +109,7 @@ lra-common/
     exercise-format.tex
     volume-preamble.tex
   bibliography/
-    volume-i-foundations.bib
-    volume-ii-number-systems.bib
-    volume-iii-analysis.bib
-    volume-iv-algebra.bib
-    volume-v-topology-geometry.bib
-    volume-vi-computational.bib
-    volume-vii-numerical-approximation.bib
-    volume-viii-logic-foundations.bib
-    general-reference.bib
-    analysis.bib                 # legacy pointer only
-  scripts/
-    check_bibliography.py
+    analysis.bib
 ```
 
 `common/` and `bibliography/` are edited in `lra-common` and propagated outward.

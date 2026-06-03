@@ -7,7 +7,9 @@ Modules:
 
 - `knowledge-extraction.md`
 - `bibliography-entry.md`
-- `reading-library-tools.md`
+- `add-theorem-with-proof-stub.md`
+- `populate-proof-stub.md`
+- `proof-stub-invariant-migration.md`
 - `volume-cleanup.md`
 - `generated-wrapper-sync.md`
 - `decoration-audit.md`
