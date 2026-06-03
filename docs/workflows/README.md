@@ -6,6 +6,8 @@ core governance standards.
 Modules:
 
 - `knowledge-extraction.md`
+- `bibliography-entry.md`
+- `reading-library-tools.md`
 - `volume-cleanup.md`
 - `generated-wrapper-sync.md`
 - `decoration-audit.md`

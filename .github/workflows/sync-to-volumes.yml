@@ -1,6 +1,6 @@
 # =============================================================
 # .github/workflows/sync-to-volumes.yml
-# Syncs common/ and bibliography/ to all lra-volume-N repos
+# Syncs common/ and bibliography/ to all lra-volume-N repos and the monorepo
 # whenever they change in lra-common.
 #
 # Requirements:
@@ -52,6 +52,39 @@ jobs:
           git config user.name  "lra-sync-bot"
           git config user.email "sync-bot@noreply.github.com"
           git add common/ bibliography/ || true
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore: sync common/ from lra-common"
+          git push
+
+  sync-monorepo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout lra-common
+        uses: actions/checkout@v4
+        with:
+          path: source
+
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          repository: wsollers/Learning-Real-Analysis
+          token: ${{ secrets.SYNC_PAT }}
+          path: target
+
+      - name: Sync common/ directory
+        run: |
+          rsync -av --delete source/common/ target/common/
+
+      - name: Sync bibliography/ directory
+        run: |
+          rsync -av --delete source/bibliography/ target/bibliography/
+
+      - name: Commit and push if changed
+        run: |
+          cd target
+          git config user.name  "lra-sync-bot"
+          git config user.email "sync-bot@noreply.github.com"
+          git add common/ bibliography/
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore: sync common/ from lra-common"
           git push

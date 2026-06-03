@@ -16,9 +16,21 @@ common/
   volume-preamble.tex  — inputs all of the above; used by every volume-N-main.tex
   exercise-format.tex  — exercise record stubs and tag macros
 bibliography/
-  analysis.bib         — canonical bibliography
+  volume-*.bib         — canonical split bibliography by volume
+  general-reference.bib
+  analysis.bib         — legacy pointer only; do not add entries here
 images/                — shared figures and images
+scripts/
+  check_bibliography.py — duplicate check and source lookup helper
 ```
+
+## Bibliography workflow
+
+Add bibliography entries only in `lra-common`. For phone photos, screenshots,
+OCR output, or extractor candidates, follow
+`docs/workflows/bibliography-entry.md`: search first, add the entry to the
+single canonical split `.bib` file, run `python scripts/check_bibliography.py`,
+then commit and push.
 
 ## How volume repos use this
 
@@ -26,7 +38,7 @@ Each `lra-volume-N` repo contains a copy of `common/` and `bibliography/` that i
 
 ## Sync workflow
 
-When this repo changes, the GitHub Actions workflow `.github/workflows/sync-to-volumes.yml` pushes updated files to each volume repo automatically.
+When this repo changes, the GitHub Actions workflow `.github/workflows/sync-to-volumes.yml` pushes updated files to each volume repo and to the monorepo automatically.
 
 ## Canonical sources
 
