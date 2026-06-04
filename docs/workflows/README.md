@@ -12,6 +12,7 @@ Modules:
 - `bibliography-entry.md`
 - `add-theorem-with-proof-stub.md`
 - `populate-proof-stub.md`
+- `exercise-vault-memorialization.md`
 - `proof-stub-invariant-migration.md`
 - `proof-layout-audit.md`
 - `volume-layout-audit.md`
