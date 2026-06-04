@@ -5,6 +5,9 @@ core governance standards.
 
 Modules:
 
+- `content-generation-from-source.md`
+  - fixture: `fixtures/interval-arithmetic-cluster-golden.tex`
+  - fixture: `fixtures/interval-algebra-law-cluster-golden.tex`
 - `knowledge-extraction.md`
 - `bibliography-entry.md`
 - `add-theorem-with-proof-stub.md`
