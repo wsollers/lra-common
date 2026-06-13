@@ -53,12 +53,9 @@ Verify the following elements appear in this exact order, with no rendered conte
 3. Breadcrumb macro: `\breadcrumb{subject}{prior}{current}{next}`.
 4. Notes route: `\input{volume-*/chapter/notes/index}`.
 5. Proof heading: `\section*{Proofs}`.
-6. Print-edition exclusion begins: `\LRAExcludeFromPrintEditionBegin`.
-7. Proof heading: `\section*{Proofs}`.
-8. Proof route: `\input{volume-*/chapter/proofs/index}`.
-9. Capstone heading: `\section*{Capstone}`.
-10. Capstone route: `\input{volume-*/chapter/proofs/exercises/index}`.
-11. Print-edition exclusion ends: `\LRAExcludeFromPrintEditionEnd`.
+6. Print-aware proof route: `\LRAProofsInput{volume-*/chapter/proofs/index}`.
+7. Capstone heading: `\section*{Capstone}`.
+8. Print-aware capstone route: `\LRAExercisesInput{volume-*/chapter/proofs/exercises/index}`.
 
 Do not require status boxes, roadmap sections, or generated chapter exposition in the chapter router.
 

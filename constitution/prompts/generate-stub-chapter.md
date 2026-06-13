@@ -56,21 +56,18 @@ Structure in this exact order:
 
 \input{{{volume path}/{chapter subject name}/notes/index}}
 
-\LRAExcludeFromPrintEditionBegin
 \section*{{Proofs}}
-\input{{{volume path}/{chapter subject name}/proofs/index}}
+\LRAProofsInput{{{volume path}/{chapter subject name}/proofs/index}}
 
 \section*{{Capstone}}
-\input{{{volume path}/{chapter subject name}/proofs/exercises/index}}
-\LRAExcludeFromPrintEditionEnd
+\LRAExercisesInput{{{volume path}/{chapter subject name}/proofs/exercises/index}}
 ```
 
 Rules:
 - Use the `\breadcrumb{...}{...}{...}{...}` macro, not a hand-rolled box.
 - Do not include status boxes, roadmap sections, or generated exposition in the chapter router.
 - Notes content starts in `{chapter}/notes/index.tex`.
-- Proof and capstone routes must be ordinary `\input{...}` lines inside the
-  print-edition exclusion block shown above.
+- Proof and capstone routes must use the print-aware macros shown above.
 - Comments and blank lines are allowed; rendered content outside the skeleton is not.
 
 
