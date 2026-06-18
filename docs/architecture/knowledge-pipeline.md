@@ -26,6 +26,8 @@ The pipeline relies on:
 - dependency remarks with `\hyperref[label]{Readable Name}` items,
 - statement labels using `def:`, `ax:`, `thm:`, `lem:`, `prop:`, or `cor:`,
 - proof labels using `prf:` only for proof locations,
+- worked examples using `workedexample` with `ex:` labels and formal-label
+  metadata macros,
 - canonical chapter and proof file structure,
 - canonical YAML from `Learning-Real-Analysis`.
 
@@ -41,6 +43,7 @@ Extractor output should preserve enough metadata to identify:
 - display title,
 - dependency labels,
 - proof availability,
+- worked-example labels, titles, formal illustration/use links, and tags,
 - source line or structural location when available.
 
 Generated explorer data is not authored directly in volume repos. It is derived

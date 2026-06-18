@@ -256,6 +256,13 @@ Preferred local order inside a `topicbox`:
 6. examples and non-examples
 7. consequences
 
+Worked examples are digital-edition learning artifacts, not theorem-like
+statements. They use the shared `workedexample` environment, require stable
+`ex:` labels, may carry `\LRAWorkedExampleFor`,
+`\LRAWorkedExampleUses`, and `\LRAWorkedExampleTags` metadata, and are excluded
+from print builds by the environment itself. They may illustrate or use formal
+labels but shall not become formal dependency targets.
+
 When a subsection contains multiple related formulations of one concept,
 generation shall use separate `topicbox` containers over creating extra
 subsections or flattening all formulations into one uninterrupted block.

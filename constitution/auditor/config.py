@@ -80,6 +80,7 @@ def set_repo_root(repo_dir: str | Path | None = None) -> Path:
         "audit_symbols": PROMPTS_DIR / "audit-chapter-symbols.md",
         "plan_toolkits": PROMPTS_DIR / "plan-toolkits.md",
         "generate_statement": PROMPTS_DIR / "generate-statement.md",
+        "generate_worked_example": PROMPTS_DIR / "generate-worked-example.md",
         "generate_proof": PROMPTS_DIR / "generate-proof.md",
         "generate_stub_chapter": PROMPTS_DIR / "generate-stub-chapter.md",
         "generate_stub_volume": PROMPTS_DIR / "generate-stub-volume.md",

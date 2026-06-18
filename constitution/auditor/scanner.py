@@ -31,6 +31,17 @@ class EnvironmentEntry:
 
 
 @dataclass
+class WorkedExampleEntry:
+    label: str | None
+    file: str
+    display_title: str
+    line: int
+    illustrates: list[str] = field(default_factory=list)
+    uses: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
+
+
+@dataclass
 class ProofEntry:
     label: str                  # prf:X
     file: str                   # relative path from chapter root
@@ -42,6 +53,7 @@ class ScanResult:
     subject: str
     chapter_root: Path
     environments: list[EnvironmentEntry] = field(default_factory=list)
+    worked_examples: list[WorkedExampleEntry] = field(default_factory=list)
     proof_files: list[ProofEntry] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
@@ -58,8 +70,20 @@ _ENV_OPEN = re.compile(
     re.IGNORECASE,
 )
 
+_WORKED_EXAMPLE = re.compile(
+    r"\\begin\{workedexample\}"
+    r"(?:\[([^\]]*)\])?"
+    r"(?P<body>.*?)"
+    r"\\end\{workedexample\}",
+    re.IGNORECASE | re.DOTALL,
+)
+
 # Matches: \label{def:upper-bound} or \label{thm:cauchy-criterion}
 _LABEL = re.compile(r"\\label\{([a-z]+:[a-z0-9\-]+)\}")
+_EXAMPLE_LABEL = re.compile(r"\\label\{(ex:[^{}]+)\}")
+_WORKED_EXAMPLE_FOR = re.compile(r"\\LRAWorkedExampleFor\{([^}]*)\}")
+_WORKED_EXAMPLE_USES = re.compile(r"\\LRAWorkedExampleUses\{([^}]*)\}")
+_WORKED_EXAMPLE_TAGS = re.compile(r"\\LRAWorkedExampleTags\{([^}]*)\}")
 
 # Matches: \label{prf:...} in proof files
 _PROOF_LABEL = re.compile(r"\\label\{(prf:[a-z0-9\-]+)\}")
@@ -109,12 +133,13 @@ def _definitional_root_labels(text: str) -> set[str]:
 def _scan_notes_file(
     tex_path: Path,
     chapter_root: Path,
-) -> tuple[list[EnvironmentEntry], list[str]]:
+) -> tuple[list[EnvironmentEntry], list[WorkedExampleEntry], list[str]]:
     """
     Scans a single notes .tex file for theorem-like environments.
     Returns (entries, warnings).
     """
     entries: list[EnvironmentEntry] = []
+    worked_examples: list[WorkedExampleEntry] = []
     warnings: list[str] = []
     rel_path = str(tex_path.relative_to(chapter_root))
 
@@ -122,7 +147,7 @@ def _scan_notes_file(
         text = tex_path.read_text(encoding="utf-8")
     except Exception as e:
         warnings.append(f"Could not read {rel_path}: {e}")
-        return entries, warnings
+        return entries, worked_examples, warnings
 
     lines = text.split("\n")
 
@@ -186,7 +211,59 @@ def _scan_notes_file(
             if entry.label in droots:
                 entry.root_kind = "definitional"
 
-    return entries, warnings
+    line_starts = _line_starts(text)
+    for match in _WORKED_EXAMPLE.finditer(text):
+        title = (match.group(1) or "").strip()
+        body = match.group("body")
+        label_match = _EXAMPLE_LABEL.search(body)
+        label = label_match.group(1) if label_match else None
+        line = _line_number(line_starts, match.start())
+        if label is None:
+            warnings.append(
+                f"{rel_path} line {line}: "
+                "\\begin{workedexample} has no \\label{ex:...}."
+            )
+
+        worked_examples.append(WorkedExampleEntry(
+            label=label,
+            file=rel_path,
+            display_title=title or label or "Untitled worked example",
+            line=line,
+            illustrates=_metadata_list(_WORKED_EXAMPLE_FOR, body),
+            uses=_metadata_list(_WORKED_EXAMPLE_USES, body),
+            tags=_metadata_list(_WORKED_EXAMPLE_TAGS, body),
+        ))
+
+    return entries, worked_examples, warnings
+
+
+def _metadata_list(pattern: re.Pattern[str], text: str) -> list[str]:
+    values: list[str] = []
+    for match in pattern.finditer(text):
+        values.extend(
+            item.strip()
+            for item in match.group(1).split(",")
+            if item.strip()
+        )
+    return values
+
+
+def _line_starts(text: str) -> list[int]:
+    starts = [0]
+    for match in re.finditer("\n", text):
+        starts.append(match.end())
+    return starts
+
+
+def _line_number(line_starts: list[int], offset: int) -> int:
+    lo, hi = 0, len(line_starts)
+    while lo + 1 < hi:
+        mid = (lo + hi) // 2
+        if line_starts[mid] <= offset:
+            lo = mid
+        else:
+            hi = mid
+    return lo + 1
 
 
 def _scan_proof_file(
@@ -271,8 +348,9 @@ def scan_chapter(chapter_path: Path) -> ScanResult:
             # Skip index files - they only contain \input chains
             if tex_file.name == "index.tex":
                 continue
-            entries, warnings = _scan_notes_file(tex_file, chapter_root)
+            entries, worked_examples, warnings = _scan_notes_file(tex_file, chapter_root)
             result.environments.extend(entries)
+            result.worked_examples.extend(worked_examples)
             result.warnings.extend(warnings)
     else:
         result.warnings.append(f"notes/ directory not found in {chapter_root}")
@@ -342,6 +420,8 @@ def scan_result_to_yaml(
         doc["dependencies"] = {"prior": "", "next": ""}
 
     doc["environments"] = [_environment_to_dict(e) for e in result.environments]
+    if result.worked_examples:
+        doc["worked_examples"] = [asdict(e) for e in result.worked_examples]
     doc["proof_files"]  = [asdict(p) for p in result.proof_files]
 
     return yaml.dump(doc, default_flow_style=False, allow_unicode=True, sort_keys=False)

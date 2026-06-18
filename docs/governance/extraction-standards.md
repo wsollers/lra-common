@@ -174,6 +174,63 @@ non_examples:
 Non-example metadata should preserve the failed condition when the source text
 identifies it.
 
+## Worked Example Artifacts
+
+Worked examples use the source-visible `workedexample` environment:
+
+```latex
+\begin{workedexample}[Chain Rule]
+\label{ex:chain-rule}
+\LRAWorkedExampleFor{thm:chain-rule}
+\LRAWorkedExampleUses{def:derivative, thm:chain-rule}
+\LRAWorkedExampleTags{calculus, differentiation}
+...
+\end{workedexample}
+```
+
+They are independent extractable learning artifacts, but they are not formal
+knowledge-graph dependency targets. The extractor should create worked-example
+records with:
+
+- source repository and file;
+- `ex:` label;
+- optional display title;
+- source line or structural location when available;
+- body content;
+- formal labels illustrated by `\LRAWorkedExampleFor`;
+- formal labels used by `\LRAWorkedExampleUses`;
+- optional tags from `\LRAWorkedExampleTags`.
+
+The `for` and `uses` metadata may point only to formal mathematical labels:
+`def:`, `ax:`, `thm:`, `lem:`, `prop:`, or `cor:`. They must not point to proof
+labels, worked-example labels, exercises, figures, sections, remarks, or
+ordinary prose anchors.
+
+Preferred extracted shape:
+
+```yaml
+worked_examples:
+  - id: ex:chain-rule
+    title: Chain Rule
+    source_file: volume-iii/analysis/differentiation/notes/index.tex
+    source_line_start: 42
+    illustrates:
+      - thm:chain-rule
+    uses:
+      - def:derivative
+      - thm:chain-rule
+    tags:
+      - calculus
+      - differentiation
+    body: |
+      ...
+```
+
+The existing theorem-style `example` environment is legacy source. Migration
+tools should classify legacy examples as directly transformable,
+definition-attached metadata, or not transformable. Do not automatically turn
+short concept-boundary lists into worked examples.
+
 ## Exposition Metadata
 
 `Exposition` remark blocks are extractable explanatory metadata. They preserve
