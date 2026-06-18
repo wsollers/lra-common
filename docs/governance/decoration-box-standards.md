@@ -24,11 +24,6 @@ The owning definition, theorem, lemma, proposition, corollary, or axiom remains
 the primary formal artifact. Decoration blocks are attached metadata and do not
 create an independent theorem-like visual hierarchy.
 
-Worked examples are separate digital-edition learning artifacts. They use the
-`workedexample` environment, not `remark*` and not the theorem-style `example`
-environment. They render without border or decorative chrome and are excluded
-from print builds by the environment itself.
-
 ## Scope
 
 Use this standard for standardized surrounding blocks attached to:
@@ -45,10 +40,6 @@ Use this standard for standardized surrounding blocks attached to:
 This standard does not decide whether an artifact requires each block. The
 artifact-specific standard decides that. This document standardizes the shape,
 meaning, and order of blocks once they are required or intentionally included.
-
-Worked examples may follow a formal artifact and its decoration blocks when a
-structured walkthrough materially helps learning. They must not interrupt the
-required decoration-block order for the formal artifact.
 
 ## Decoration Blocks
 
@@ -208,40 +199,6 @@ structures, subtle predicates, and frequently confused pairs of concepts.
 Non-examples should identify the failed axiom, condition, or hypothesis
 whenever practical. These blocks are explanatory metadata attached to the
 owning definition; they do not create separate knowledge-graph nodes.
-
-## Worked Examples
-
-Use `workedexample` for structured walkthroughs, computations, applications,
-and model uses that should be extractable as learning artifacts:
-
-```latex
-\begin{workedexample}[Chain Rule]
-\label{ex:chain-rule}
-\LRAWorkedExampleFor{thm:chain-rule}
-\LRAWorkedExampleUses{def:derivative, thm:chain-rule}
-\LRAWorkedExampleTags{calculus, differentiation}
-
-\textbf{Setup.} ...
-
-\textbf{Work.} ...
-
-\textbf{Conclusion.} ...
-\end{workedexample}
-```
-
-Worked examples require a stable `ex:` label. The display title is optional but
-recommended when a short learner-facing name exists. Metadata links in
-`\LRAWorkedExampleFor` and `\LRAWorkedExampleUses` must point only to formal
-math labels with prefixes `def:`, `ax:`, `thm:`, `lem:`, `prop:`, or `cor:`.
-Do not point metadata links to proof labels, example labels, exercises,
-figures, sections, or remarks.
-
-Worked examples must not use `tcolorbox`, theorem-like environments, or manual
-print guards. The environment itself handles print exclusion.
-
-Use `Examples` and `Non-Examples` remark blocks for short concept-boundary
-lists attached to definitions. Use `workedexample` only when there is actual
-structured work to follow.
 
 ## Dependencies
 

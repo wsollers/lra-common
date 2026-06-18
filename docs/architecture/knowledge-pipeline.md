@@ -17,6 +17,11 @@ provider-specific agent behavior.
   graph data, canonical YAML, or explorer internals.
 - `lra-governance` owns the standards that make extraction possible.
 
+For the direct multi-repo refresh path, `lra-governance` owns the orchestration
+scripts, schemas, validators, prompts, logs, reports, and committed comparison
+baselines. The volume repos are source inputs. `lra-knowledge-explorer` is the
+publication target for validated generated data and LLM audit batches.
+
 ## Extraction Inputs
 
 The pipeline relies on:
@@ -26,8 +31,6 @@ The pipeline relies on:
 - dependency remarks with `\hyperref[label]{Readable Name}` items,
 - statement labels using `def:`, `ax:`, `thm:`, `lem:`, `prop:`, or `cor:`,
 - proof labels using `prf:` only for proof locations,
-- worked examples using `workedexample` with `ex:` labels and formal-label
-  metadata macros,
 - canonical chapter and proof file structure,
 - canonical YAML from `Learning-Real-Analysis`.
 
@@ -43,7 +46,6 @@ Extractor output should preserve enough metadata to identify:
 - display title,
 - dependency labels,
 - proof availability,
-- worked-example labels, titles, formal illustration/use links, and tags,
 - source line or structural location when available.
 
 Generated explorer data is not authored directly in volume repos. It is derived

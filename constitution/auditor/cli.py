@@ -199,23 +199,6 @@ def cmd_index_labels(args: argparse.Namespace) -> None:
     print(f"Markdown index written to: {md_path}")
 
 
-def cmd_index_worked_examples(args: argparse.Namespace) -> None:
-    from auditor.indexes.worked_examples import (
-        build_worked_example_index,
-        write_worked_example_index,
-    )
-    index = build_worked_example_index(Path(args.path))
-    json_path, md_path = write_worked_example_index(
-        index,
-        output_dir=Path(args.out_dir) if args.out_dir else None,
-    )
-    print(f"Worked/example candidates indexed: {index['count']}")
-    for classification, count in index["classification_counts"].items():
-        print(f"  {classification}: {count}")
-    print(f"JSON index written to: {json_path}")
-    print(f"Markdown index written to: {md_path}")
-
-
 def cmd_scan_chapter(args: argparse.Namespace) -> None:
     from auditor.scanner import scan_chapter, scan_result_to_yaml
 
@@ -234,10 +217,9 @@ def cmd_scan_chapter(args: argparse.Namespace) -> None:
 
     yaml_str = scan_result_to_yaml(result, existing_yaml=existing_yaml)
 
-    print(f"\nScanned {len(result.environments)} environment(s), "
-          f"{len(result.worked_examples)} worked example(s), "
+    print(f"\nScanned {len(result.environments)} environment(s) "
           f"and {len(result.proof_files)} proof file(s).\n")
-    print("Proposed chapter.yaml (environments + worked_examples + proof_files sections):\n")
+    print("Proposed chapter.yaml (environments + proof_files sections):\n")
     print(yaml_str)
 
     if yaml_path.exists():
@@ -316,37 +298,6 @@ def cmd_generate_statement(args: argparse.Namespace) -> None:
             sys.exit(2)
 
 
-def cmd_generate_worked_example(args: argparse.Namespace) -> None:
-    from auditor.generators.worked_example import (
-        generate_worked_example,
-        split_csv_arg,
-    )
-    from auditor.validators.worked_example import (
-        format_worked_example_validation_report,
-        validate_worked_example_block,
-    )
-
-    latex = generate_worked_example(
-        content_description=args.subject,
-        chapter_subject=args.chapter,
-        label=args.label,
-        title=args.title,
-        illustrates=split_csv_arg(args.illustrates),
-        uses=split_csv_arg(args.uses),
-        tags=split_csv_arg(args.tags),
-    )
-    _print_and_optionally_write(latex, args)
-    if args.validate:
-        report = validate_worked_example_block(
-            latex,
-            expected_label=args.label,
-        )
-        print()
-        print(format_worked_example_validation_report(report))
-        if report["result"] != "PASS":
-            sys.exit(2)
-
-
 def cmd_validate_generated(args: argparse.Namespace) -> None:
     from auditor.report import write_report
     from auditor.validators.generated_block import (
@@ -360,29 +311,6 @@ def cmd_validate_generated(args: argparse.Namespace) -> None:
         expected_label=args.label,
     )
     markdown = format_generated_validation_report(report)
-    print(markdown)
-
-    if args.out:
-        out_path = Path(args.out)
-        write_report(markdown, out_path)
-        print(f"\nValidation report written to: {out_path}")
-
-    if report["result"] != "PASS":
-        sys.exit(2)
-
-
-def cmd_validate_worked_example(args: argparse.Namespace) -> None:
-    from auditor.report import write_report
-    from auditor.validators.worked_example import (
-        format_worked_example_validation_report,
-        validate_worked_example_file,
-    )
-
-    report = validate_worked_example_file(
-        Path(args.file),
-        expected_label=args.label,
-    )
-    markdown = format_worked_example_validation_report(report)
     print(markdown)
 
     if args.out:
@@ -733,12 +661,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", help="Optional markdown report output path")
     p.set_defaults(func=cmd_validate_generated)
 
-    p = validate_sub.add_parser("worked-example", help="Validate a worked-example block")
-    p.add_argument("file", help="Path to the worked-example .tex block")
-    p.add_argument("--label", help="Expected `ex:` label")
-    p.add_argument("--out", help="Optional markdown report output path")
-    p.set_defaults(func=cmd_validate_worked_example)
-
     p = validate_sub.add_parser("ontology", help="Validate ontology YAML registries and migration targets")
     p.add_argument("path", nargs="?", help="Ontology directory. Defaults to <repo>/ontology")
     p.add_argument("--out", help="Optional markdown report output path")
@@ -752,11 +674,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("path", help="Path to scan for formal math environments")
     p.add_argument("--out-dir", help="Directory for generated index files")
     p.set_defaults(func=cmd_index_labels)
-
-    p = index_sub.add_parser("worked-examples", help="Index worked examples and legacy example candidates")
-    p.add_argument("path", help="Path to scan for worked examples and legacy example environments")
-    p.add_argument("--out-dir", help="Directory for generated index files")
-    p.set_defaults(func=cmd_index_worked_examples)
 
     # ---- scan ----
     scan = sub.add_parser("scan", help="Scan operations (bootstrap chapter.yaml)")
@@ -790,19 +707,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out",     help="Write output to this file path")
     p.add_argument("--validate", action="store_true", help="Run deterministic generated-block validation after generation")
     p.set_defaults(func=cmd_generate_statement)
-
-    # generate worked-example
-    p = gen_sub.add_parser("worked-example", help="Generate a worked-example block")
-    p.add_argument("--subject", required=True, help="Worked-example content description")
-    p.add_argument("--chapter", required=True, help="Chapter subject name")
-    p.add_argument("--label", help="Canonical ex: label to use")
-    p.add_argument("--title", help="Optional worked-example display title")
-    p.add_argument("--illustrates", help="Comma-separated formal labels illustrated by the example")
-    p.add_argument("--uses", help="Comma-separated formal labels used in the example")
-    p.add_argument("--tags", help="Comma-separated explorer tags")
-    p.add_argument("--out", help="Write output to this file path")
-    p.add_argument("--validate", action="store_true", help="Run deterministic worked-example validation after generation")
-    p.set_defaults(func=cmd_generate_worked_example)
 
     # generate proof
     p = gen_sub.add_parser("proof", help="Generate a proof file")

@@ -21,9 +21,3 @@ and shared infrastructure repo.
 Extractor runs should point at the local `Learning-Real-Analysis` clone. The
 pipeline depends on stable labels, dependency blocks, and canonical chapter
 structure.
-
-Worked-example extraction is supported through `workedexample` environments.
-The explorer may surface these as optional learning artifacts attached to the
-formal labels named by `\LRAWorkedExampleFor` and
-`\LRAWorkedExampleUses`. These records do not become formal dependency targets
-and must not alter theorem/definition graph topology.
