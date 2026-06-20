@@ -1,0 +1,100 @@
+\documentclass[12pt,a4paper]{report}
+\input{common/volume-preamble}
+
+\begin{document}
+
+\chapter*{Model Box Sample}
+
+\begin{modelbox}{Model (Classical Propositional Logic)}
+\begin{model}[Classical Propositional Logic]\label{model:classical-propositional-logic}
+\modeldepends{
+  def:propositional-language,
+  def:truth-value-propositional-logic,
+  def:truth-assignment-propositional-logic,
+  def:satisfaction-propositional-formula
+}
+
+Classical propositional logic is presented as a two-valued model whose
+syntax is given by a propositional language and whose semantics is given by
+valuations into the two-element Boolean algebra.
+
+\begin{modelsorts}
+  \modelsort{\mathcal P}{\text{a set of propositional variables}}
+    {The syntactic atoms of the language.}
+  \modelsort{\Phi}{\text{the set of well-formed formulas over }\mathcal P}
+    {The formulas generated from atoms and connectives.}
+  \modelsort{\mathbf 2}{\{0,1\}}
+    {The semantic truth-value domain.}
+\end{modelsorts}
+
+\begin{modelconstants}
+  \modelconstant{0}{def:truth-value-propositional-logic}
+  \modelconstant{1}{def:truth-value-propositional-logic}
+\end{modelconstants}
+
+\begin{modelarity}
+  \arity{\neg_{\Phi}}{1}
+  \arity{\land_{\Phi}}{2}
+  \arity{\lor_{\Phi}}{2}
+  \arity{\to_{\Phi}}{2}
+  \arity{\leftrightarrow_{\Phi}}{2}
+\end{modelarity}
+
+\begin{modelfunctions}
+  \modelfunction{\neg^{\mathbf 2}}{\mathbf 2 \to \mathbf 2}
+    {Truth-value negation.}
+  \modelfunction{\land^{\mathbf 2}}{\mathbf 2^2 \to \mathbf 2}
+    {Truth-value conjunction.}
+  \modelfunction{\lor^{\mathbf 2}}{\mathbf 2^2 \to \mathbf 2}
+    {Truth-value disjunction.}
+  \modelfunction{\to^{\mathbf 2}}{\mathbf 2^2 \to \mathbf 2}
+    {Truth-value implication.}
+  \modelfunction{\leftrightarrow^{\mathbf 2}}{\mathbf 2^2 \to \mathbf 2}
+    {Truth-value biconditional.}
+\end{modelfunctions}
+
+\begin{modelrelations}
+  \modelrelation{\models}{v \models \varphi}
+    {Satisfaction of a formula by a valuation.}
+  \modelrelation{\models}{\Gamma \models \varphi}
+    {Semantic consequence from a set of assumptions.}
+\end{modelrelations}
+
+\begin{modelsemantics}
+  \modelclause{A valuation is a function $v:\mathcal P\to\mathbf 2$.}
+  \modelclause{Satisfaction is defined by $v\models\varphi$ iff
+  $\bar v(\varphi)=1$.}
+  \modelclause{Semantic consequence is defined by $\Gamma\models\varphi$ iff
+  for every valuation $v:\mathcal P\to\mathbf 2$, if $v\models\gamma$ for
+  every $\gamma\in\Gamma$, then $v\models\varphi$.}
+\end{modelsemantics}
+
+\begin{modelbridge}
+  \bridgeclause{$\bar v(p)=v(p)$ for every atomic variable $p\in\mathcal P$.}
+  \bridgeclause{$\bar v(\neg_{\Phi}\varphi)=
+  \neg^{\mathbf 2}\bar v(\varphi)$.}
+  \bridgeclause{$\bar v(\varphi\land_{\Phi}\psi)=
+  \land^{\mathbf 2}(\bar v(\varphi),\bar v(\psi))$.}
+  \bridgeclause{$\bar v(\varphi\lor_{\Phi}\psi)=
+  \lor^{\mathbf 2}(\bar v(\varphi),\bar v(\psi))$.}
+  \bridgeclause{$\bar v(\varphi\to_{\Phi}\psi)=
+  \to^{\mathbf 2}(\bar v(\varphi),\bar v(\psi))$.}
+  \bridgeclause{$\bar v(\varphi\leftrightarrow_{\Phi}\psi)=
+  \leftrightarrow^{\mathbf 2}(\bar v(\varphi),\bar v(\psi))$.}
+\end{modelbridge}
+
+\begin{modelaxioms}
+  \modelaxiom{The semantic algebra is the two-element Boolean algebra
+  $\mathbf 2=(\{0,1\},\neg^{\mathbf 2},\land^{\mathbf 2},
+  \lor^{\mathbf 2},\to^{\mathbf 2},\leftrightarrow^{\mathbf 2})$.}
+\end{modelaxioms}
+
+\begin{modelconsequences}
+  \modelconsequence{Every valuation $v:\mathcal P\to\mathbf 2$ extends
+  uniquely to a function $\bar v:\Phi\to\mathbf 2$ satisfying the bridge
+  clauses.}
+\end{modelconsequences}
+\end{model}
+\end{modelbox}
+
+\end{document}
