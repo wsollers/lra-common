@@ -9,7 +9,7 @@ Generated from:
 - docs/governance/repo-overlays/lra-common.md
 
 Regenerate from lra-governance.
-Emergency downstream edits must be ported upstream before the next sync.
+Emergency downstream edits must be ported upstream.
 -->
 
 # Agent Instructions
@@ -17,6 +17,13 @@ Emergency downstream edits must be ported upstream before the next sync.
 ## Global Agent Rules
 
 - Treat generated instruction files as derived artifacts.
+- Canonical governance, workflows, validators, schemas, prompts, and shared
+  scripts live in `../lra-governance`, or `F:/repos/lra-governance` on the
+  local Windows checkout. Use `LRA_GOVERNANCE_ROOT` when the checkout is
+  elsewhere.
+- Do not expect governance files or `common/` to be synced into other repos.
+  Build workflows should obtain `lra-governance` and `lra-common` directly,
+  normally through the Docker image or explicit checkouts.
 - Follow the owning repository boundary for every task.
 - Do not include secrets, credentials, tokens, or machine-local private values.
 - Do not modify mathematical content during governance or wrapper-generation tasks.
@@ -33,13 +40,14 @@ Owned concerns:
 
 - `common/`,
 - shared LaTeX macros, environments, boxes, colors, and preambles,
-- common-to-volume sync expectations.
+- canonical shared LaTeX infrastructure consumed directly by builds.
 
 ## Agent Scope
 
-Edit shared LaTeX infrastructure here, not in volume repo copies. When changing
-`common/`, expect sync workflows to propagate updates to volume repos and the
-monorepo. Bibliography entries are owned by the corresponding `lra-volume-*`
+Edit shared LaTeX infrastructure here, not in volume repo copies. Do not expect
+`common/` to be synced into volume repos or the monorepo. Build workflows should
+obtain `lra-common` directly, normally through the Docker image or an explicit
+checkout. Bibliography entries are owned by the corresponding `lra-volume-*`
 repository shard.
 
 Do not edit canonical YAML here; that remains owned by `Learning-Real-Analysis`.

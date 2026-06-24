@@ -1,14 +1,14 @@
-# Sync workflow setup
+# Disabled sync workflow
 
-The `sync-to-volumes.yml` workflow automatically pushes `common/` from this repo to all volume repos whenever it changes. Bibliography shards are owned by the volume repos and sync from each volume repo into `Learning-Real-Analysis`.
+The `sync-to-volumes.yml` workflow no longer pushes `common/` from this repo to
+volume repos or to `Learning-Real-Analysis`. Builds should obtain `lra-common`
+directly, normally through the Docker image or an explicit checkout.
 
-## Setup required
+## Token setup
 
-1. Create a GitHub Personal Access Token (PAT) with `repo` scope at https://github.com/settings/tokens
-2. In `lra-common` repository settings → Secrets and variables → Actions, add a secret named `SYNC_PAT` with the token value.
-
-Once set up, any push to `common/` in this repo will automatically propagate to all volume repos.
+No sync token is required for this disabled workflow.
 
 ## Manual sync
 
-To sync manually, trigger the workflow from the Actions tab with "Run workflow".
+There is no manual fan-out sync path. If a build needs shared LaTeX files, use
+the Docker image or explicitly check out `wsollers/lra-common`.

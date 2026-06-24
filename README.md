@@ -25,17 +25,18 @@ scripts/
 
 Bibliography entries are no longer owned by `lra-common`. Add and maintain
 entries in the owning `lra-volume-*` repository's volume bibliography shard.
-The volume sync workflow copies that shard into `Learning-Real-Analysis`.
 
 ## How volume repos use this
 
-Each `lra-volume-N` repo contains a copy of `common/` kept in sync via a
-GitHub Actions workflow. Volume bibliography files are volume-owned so the
-volume repos remain self-contained for Overleaf.
+Volume repos should not carry synced copies of `common/`. Builds should obtain
+`lra-common` directly, normally through the Docker image or an explicit checkout.
+Volume bibliography files remain volume-owned.
 
 ## Sync workflow
 
-When this repo changes, the GitHub Actions workflow `.github/workflows/sync-to-volumes.yml` pushes updated `common/` files to each volume repo and to the monorepo automatically.
+The historical fan-out workflow `.github/workflows/sync-to-volumes.yml` is
+disabled. It is retained only as an explicit no-op record so accidental pushes
+cannot overwrite volume repos or the monorepo.
 
 ## Canonical sources
 

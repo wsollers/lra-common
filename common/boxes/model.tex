@@ -44,6 +44,44 @@
 \newcommand{\modeldepends}[1]{%
   \par\smallskip\noindent\textbf{Depends on:} \texttt{#1}\par\smallskip
 }
+\newcommand{\modelid}[1]{}
+\newcommand{\modelkind}[1]{}
+\newcommand{\modellayer}[1]{}
+\newcommand{\modelsource}[1]{}
+\NewDocumentCommand{\modelparameter}{+m}{\begin{modelcomponent}{Parameter}#1\end{modelcomponent}}
+\NewDocumentCommand{\modellanguage}{+m}{\begin{modelcomponent}{Language}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelpresentation}{+m}{\begin{modelcomponent}{Presented Theory}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelstructure}{+m}{\begin{modelcomponent}{Structure}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelinterpretation}{+m}{\begin{modelcomponent}{Interpretation}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelbinding}{+m}{\begin{modelcomponent}{Binding}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelbinds}{+m}{\begin{modelcomponent}{Binds}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelsemanticbridge}{+m}{\begin{modelcomponent}{Syntax--Semantics Bridge}#1\end{modelcomponent}}
+\NewDocumentCommand{\modeldelta}{+m}{\begin{modelcomponent}{Layer Delta}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelinstances}{+m}{\begin{modelcomponent}{Instances}#1\end{modelcomponent}}
+\NewDocumentCommand{\modeladmissibility}{+m}{\begin{modelcomponent}{Admissibility}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelboundary}{+m}{\begin{modelcomponent}{Boundary}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelnote}{+m}{\begin{modelcomponent}{Note}#1\end{modelcomponent}}
+\NewDocumentCommand{\modeltheorem}{+m}{\begin{modelcomponent}{Theorem}#1\end{modelcomponent}}
+\NewDocumentCommand{\modeltheorymodels}{+m}{\begin{modelcomponent}{Models of the Theory}#1\end{modelcomponent}}
+\NewDocumentCommand{\modelinherits}{+m}{\begin{modelcomponent}{Inherits}#1\end{modelcomponent}}
+\newcommand{\inheritfrom}[2]{\par\noindent\texttt{#1}: #2\par}
+
+\NewDocumentEnvironment{modelparameterblock}{}{\begin{modelcomponent}{Parameter}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modellanguageblock}{}{\begin{modelcomponent}{Language}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelpresentationblock}{}{\begin{modelcomponent}{Presented Theory}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelstructureblock}{}{\begin{modelcomponent}{Structure}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelinterpretationblock}{}{\begin{modelcomponent}{Interpretation}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelbindingblock}{}{\begin{modelcomponent}{Binding}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelsemanticbridgeblock}{}{\begin{modelcomponent}{Syntax--Semantics Bridge}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelaxiomsblock}{}{\begin{modelcomponent}{Axioms and Laws}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modeldeltablock}{}{\begin{modelcomponent}{Layer Delta}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelinstancesblock}{}{\begin{modelcomponent}{Instances}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modeladmissibilityblock}{}{\begin{modelcomponent}{Admissibility}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelboundaryblock}{}{\begin{modelcomponent}{Boundary}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelnoteblock}{}{\begin{modelcomponent}{Note}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modeltheoremblock}{}{\begin{modelcomponent}{Theorem}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modeltheorymodelsblock}{}{\begin{modelcomponent}{Models of the Theory}}{\end{modelcomponent}}
+\NewDocumentEnvironment{modelinheritsblock}{}{\begin{modelcomponent}{Inherits}}{\end{modelcomponent}}
 
 \NewDocumentEnvironment{modelconstants}{}%
   {\begin{modelcomponent}{Constants}\begin{description}[leftmargin=2.8em,style=nextline]}%
