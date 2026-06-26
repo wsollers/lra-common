@@ -2,14 +2,14 @@
 GENERATED FILE — DO NOT EDIT BY HAND.
 
 Source repo: wsollers/lra-governance
-Source commit: d98bb51fc80e683b38a9d1e76f4a0c91037ede0a
+Source commit: 36fd69ac2e23b406e522c0c753400ce7f3938ff0
 Generated from:
 - docs/governance/...
 - docs/architecture/...
 - docs/governance/repo-overlays/lra-common.md
 
 Regenerate from lra-governance.
-Emergency downstream edits must be ported upstream.
+Emergency downstream edits must be ported upstream before regeneration.
 -->
 
 # Agent Instructions
@@ -17,17 +17,10 @@ Emergency downstream edits must be ported upstream.
 ## Global Agent Rules
 
 - Treat generated instruction files as derived artifacts.
-- Canonical governance, workflows, validators, schemas, prompts, and shared
-  scripts live in `../lra-governance`, or `F:/repos/lra-governance` on the
-  local Windows checkout. Use `LRA_GOVERNANCE_ROOT` when the checkout is
-  elsewhere.
-- Do not expect governance files or `common/` to be synced into other repos.
-  Build workflows should obtain `lra-governance` and `lra-common` directly,
-  normally through the Docker image or explicit checkouts.
 - Follow the owning repository boundary for every task.
 - Do not include secrets, credentials, tokens, or machine-local private values.
 - Do not modify mathematical content during governance or wrapper-generation tasks.
-- Do not touch `Learning-Real-Analysis/scripts/`.
+- Do not touch the retired `Learning-Real-Analysis` monorepo.
 - Port emergency downstream instruction repairs back to `lra-governance`.
 
 ## Repo Overlay
@@ -39,18 +32,24 @@ Stub overlay for shared LaTeX infrastructure.
 Owned concerns:
 
 - `common/`,
+- bibliography helper scripts,
 - shared LaTeX macros, environments, boxes, colors, and preambles,
 - canonical shared LaTeX infrastructure consumed directly by builds.
 
 ## Agent Scope
 
-Edit shared LaTeX infrastructure here, not in volume repo copies. Do not expect
-`common/` to be synced into volume repos or the monorepo. Build workflows should
-obtain `lra-common` directly, normally through the Docker image or an explicit
-checkout. Bibliography entries are owned by the corresponding `lra-volume-*`
-repository shard.
+Edit shared LaTeX infrastructure here, not in volume repo staging directories.
+Do not expect `common/` to be copied or committed into volume repos. Build
+workflows should obtain `lra-common` directly through an explicit checkout and
+mount `common/` into the Docker build container.
 
-Do not edit canonical YAML here; that remains owned by `Learning-Real-Analysis`.
+Add bibliography entries in the owning `lra-volume-*` repository shard.
+`lra-common/bibliography/` is a retired mirror, not a sync source. Mobile photo,
+screenshot, OCR, and extractor
+candidates must be searched and deduplicated before promotion to a canonical
+`.bib` file.
+
+Do not edit canonical YAML here; that is owned by `lra-governance`.
 
 ## Provider Notes
 

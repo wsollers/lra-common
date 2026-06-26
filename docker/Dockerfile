@@ -35,15 +35,8 @@ RUN fc-cache -fv
 # -------------------------------------------------------------
 WORKDIR /workspace
 
-# Default command: compile main.tex with LuaLaTeX via latexmk.
-# The -interaction=nonstopmode flag prevents the compiler from
-# halting on warnings, which would hang the container.
-# Entrypoint is sh so we can run the full latexmk pipeline.
+# Default command: show the latexmk version. Actual LRA builds pass an
+# explicit `latexmk <volume-root>.tex` command through
+# lra-governance/tools/governance/build_volume_docker.py.
 # -------------------------------------------------------------
-CMD ["latexmk", \
-     "-lualatex", \
-     "-interaction=nonstopmode", \
-     "-file-line-error", \
-     "-synctex=1", \
-     "-shell-escape", \
-     "main.tex"]
+CMD ["latexmk", "--version"]

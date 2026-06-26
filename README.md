@@ -14,7 +14,7 @@ common/
   colors.tex           — all color definitions (theorem palette, definition palette, etc.)
   environments.tex     — theorem-like environments (numbered and unnumbered)
   macros.tex           — proof macros, flash macros, citation helpers
-  volume-preamble.tex  — inputs all of the above; used by every volume-N-main.tex
+  volume-preamble.tex  — inputs all of the above; used by every volume root
   exercise-format.tex  — exercise record stubs and tag macros
 images/                — shared figures and images
 scripts/
@@ -34,16 +34,15 @@ Volume bibliography files remain volume-owned.
 
 ## Sync workflow
 
-The historical fan-out workflow `.github/workflows/sync-to-volumes.yml` is
-disabled. It is retained only as an explicit no-op record so accidental pushes
-cannot overwrite volume repos or the monorepo.
+There is no fan-out sync workflow. Volume builds consume `lra-common` from an
+explicit checkout or the build environment.
 
 ## Canonical sources
 
-The following files in `Learning-Real-Analysis` (the monorepo) remain the single source of truth:
+The following files in `lra-governance` are the single source of truth:
 
 - `predicates.yaml`
 - `notation.yaml`
 - `relations.yaml`
 
-These are read-only to all automated processes and are not duplicated here.
+These are read-only to `lra-common` automation and are not duplicated here.
