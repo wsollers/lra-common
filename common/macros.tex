@@ -253,6 +253,7 @@
 % ============================================================
 % Default: complete digital/PDF edition.
 % Print edition may be enabled either by:
+%   LRA_EDITION=print latexmk -lualatex volume-i.tex
 %   LRA_PRINT_EDITION=1 latexmk -lualatex volume-i.tex
 % or by command-line TeX injection:
 %   lualatex "\def\LRAPrintEditionRequested{1}\input{volume-i.tex}"
@@ -266,8 +267,11 @@
 \fi
 \ifdefined\directlua
   \directlua{
+    local edition = os.getenv("LRA_EDITION")
     local v = os.getenv("LRA_PRINT_EDITION")
-    if v and v ~= "" and v ~= "0" and v:lower() ~= "false" and v:lower() ~= "no" then
+    if edition and edition:lower() == "print" then
+      tex.sprint("\\global\\LRAPrintEditiontrue")
+    elseif v and v ~= "" and v ~= "0" and v:lower() ~= "false" and v:lower() ~= "no" then
       tex.sprint("\\global\\LRAPrintEditiontrue")
     end
   }

@@ -1,10 +1,313 @@
 % ============================================================
-% Breadcrumb navigation + stub status  (deterministic chrome)
-% Palette (breadcrumb / breadcrumbborder / breadcrumbtitle) is defined in boxes.tex.
-% Emitted by the breadcrumb generator; never hand-rolled, never LLM-drawn.
-% Requires: tcolorbox, etoolbox (\ifblank), amsmath (\text); amber color.
-% \input this from the preamble after boxes.tex.
+% Breadcrumb navigation and footer chrome
+%
+% Shared metadata-driven API:
+%   \lrasetup{edition=<digital|print>, paper=<letter|a4|sixbynine>}
+%   \lrameta{series={...}, volume={...}, book={...}, chapter={...},
+%            topic={...}, current=<series|volume|book|chapter|topic>}
+%   \LraBreadcrumb
+%   \LraFooterBreadcrumb
+%
+% Compatibility API retained during migration:
+%   \breadcrumb{<chapter subject>}{<prior display>}{<current display>}{<next display>}
 % ============================================================
+
+\makeatletter
+\RequirePackage{fancyhdr}
+\RequirePackage{xparse}
+
+% ------------------------------------------------------------
+% Configuration and metadata store
+% ------------------------------------------------------------
+\newif\iflra@icons
+\lra@iconstrue
+\newif\iflra@body
+\lra@bodyfalse
+
+\def\lra@edition{digital}
+\def\lra@paper{letter}
+\def\lra@threshold{360pt}
+\def\lra@series{}
+\def\lra@volume{}
+\def\lra@book{}
+\def\lra@chapter{}
+\def\lra@section{}
+\def\lra@topic{}
+\def\lra@current{topic}
+
+\pgfkeys{
+  /lra/.is family, /lra,
+  edition/.store in = \lra@edition,
+  paper/.store in = \lra@paper,
+  threshold/.store in = \lra@threshold,
+  series/.store in = \lra@series,
+  volume/.store in = \lra@volume,
+  book/.store in = \lra@book,
+  chapter/.store in = \lra@chapter,
+  section/.store in = \lra@section,
+  topic/.store in = \lra@topic,
+  current/.store in = \lra@current,
+  icons/.is choice,
+  icons/true/.code = {\lra@iconstrue},
+  icons/false/.code = {\lra@iconsfalse},
+}
+
+\newcommand{\lra@applypaper}{%
+  \edef\lra@pcur{\lra@paper}%
+  \def\lra@tmp{a4}%
+  \ifx\lra@pcur\lra@tmp
+    \geometry{a4paper,margin=2.2cm}%
+  \fi
+  \def\lra@tmp{letter}%
+  \ifx\lra@pcur\lra@tmp
+    \geometry{letterpaper,margin=1in}%
+  \fi
+  \def\lra@tmp{sixbynine}%
+  \ifx\lra@pcur\lra@tmp
+    \geometry{paperwidth=6in,paperheight=9in,margin=0.75in}%
+  \fi
+}
+
+\newcommand{\lrasetup}[1]{%
+  \pgfkeys{/lra,#1}%
+  \iflra@body\else
+    \lra@applypaper
+  \fi
+}
+\newcommand{\lrameta}[1]{\pgfkeys{/lra,#1}}
+
+% Read build-provided defaults. The build helper passes LRA_EDITION and
+% LRA_PAPER; LRA_PRINT_EDITION remains accepted for legacy build commands.
+\ifdefined\directlua
+  \directlua{
+    local edition = os.getenv("LRA_EDITION")
+    local paper = os.getenv("LRA_PAPER")
+    local legacy_print = os.getenv("LRA_PRINT_EDITION")
+    if legacy_print and legacy_print ~= "" and legacy_print ~= "0"
+       and legacy_print:lower() ~= "false" and legacy_print:lower() ~= "no" then
+      edition = "print"
+    end
+    if edition == "digital" or edition == "print" then
+      tex.sprint("\\lrasetup{edition=" .. edition .. "}")
+    end
+    if paper == "letter" or paper == "a4" or paper == "sixbynine" then
+      tex.sprint("\\lrasetup{paper=" .. paper .. "}")
+    end
+  }
+\fi
+\AtBeginDocument{\lra@applypaper\global\lra@bodytrue}
+
+% ------------------------------------------------------------
+% Color system: identity hue plus state treatment
+% ------------------------------------------------------------
+\definecolor{lraSeriesFull}{HTML}{0A3B38}
+\definecolor{lraSeriesTint}{HTML}{DCE8E6}
+\definecolor{lraVolumeFull}{HTML}{176B66}
+\definecolor{lraVolumeTint}{HTML}{DBEAE8}
+\definecolor{lraBookFull}{HTML}{8A5A12}
+\definecolor{lraBookTint}{HTML}{F1E6CF}
+\definecolor{lraChapterFull}{HTML}{5A4E44}
+\definecolor{lraChapterTint}{HTML}{E7E2DC}
+\definecolor{lraSectionFull}{HTML}{0F5F73}
+\definecolor{lraSectionTint}{HTML}{D8EAF0}
+\definecolor{lraTopicFull}{HTML}{6E2A38}
+\definecolor{lraTopicTint}{HTML}{EFD9DD}
+
+% ------------------------------------------------------------
+% Render-stable TikZ icons, taken from the breadcrumb package draft.
+% ------------------------------------------------------------
+\newcommand{\lra@iconbox}[1]{%
+  \raisebox{-0.2em}{%
+    \begin{tikzpicture}[x=1.5pt,y=1.5pt,line width=0.5pt,line cap=round,line join=round]%
+      #1%
+    \end{tikzpicture}%
+  }%
+}
+\newcommand{\lraicon@series}{\lra@iconbox{%
+  \draw (0,3)--(4,5)--(8,3)--(4,1)--cycle;
+  \draw (0,4.5)--(4,6.5)--(8,4.5);
+  \draw (0,6)--(4,8)--(8,6);}}
+\newcommand{\lraicon@volume}{\lra@iconbox{%
+  \draw (1,0) rectangle (8,8);\draw (2.6,0)--(2.6,8);}}
+\newcommand{\lraicon@book}{\lra@iconbox{%
+  \draw (4,1.6)--(4,7.4);
+  \draw (4,7.4) .. controls (2.4,6.6) and (0.8,6.7) .. (0.4,6.9)--(0.4,1.5)
+        .. controls (1.2,1.2) and (3,1.4) .. (4,2);
+  \draw (4,7.4) .. controls (5.6,6.6) and (7.2,6.7) .. (7.6,6.9)--(7.6,1.5)
+        .. controls (6.8,1.2) and (5,1.4) .. (4,2);}}
+\newcommand{\lraicon@chapter}{\lra@iconbox{%
+  \draw (0.5,6.8)--(7.5,6.8);\draw (0.5,4.7)--(5.3,4.7);
+  \draw (0.5,2.6)--(7,2.6);\draw (0.5,0.7)--(3.8,0.7);}}
+\newcommand{\lraicon@section}{\lra@iconbox{%
+  \draw (0.7,6.8)--(7.3,6.8);\draw (0.7,4.8)--(7.3,4.8);
+  \draw (0.7,2.8)--(5.8,2.8);\draw (0.7,0.8)--(4.2,0.8);}}
+\newcommand{\lraicon@topic}{\lra@iconbox{%
+  \draw (1,0)--(1,8)--(5.4,8)--(7,6.4)--(7,0)--cycle;
+  \draw (5.4,8)--(5.4,6.4)--(7,6.4);
+  \draw (2.2,5.4)--(5.8,5.4);\draw (2.2,3.8)--(5.8,3.8);\draw (2.2,2.2)--(4.6,2.2);}}
+
+% ------------------------------------------------------------
+% Metadata parsing helpers
+% ------------------------------------------------------------
+\newcommand{\lra@levelnum}[1]{%
+  \edef\lra@tmp{#1}%
+  \def\lra@N{6}%
+  \def\lra@t{series}\ifx\lra@tmp\lra@t\def\lra@N{1}\fi
+  \def\lra@t{volume}\ifx\lra@tmp\lra@t\def\lra@N{2}\fi
+  \def\lra@t{book}\ifx\lra@tmp\lra@t\def\lra@N{3}\fi
+  \def\lra@t{chapter}\ifx\lra@tmp\lra@t\def\lra@N{4}\fi
+  \def\lra@t{section}\ifx\lra@tmp\lra@t\def\lra@N{5}\fi
+  \def\lra@t{topic}\ifx\lra@tmp\lra@t\def\lra@N{6}\fi
+}
+\def\lra@splitcolon#1: #2\relax{\def\lra@eye{#1}\def\lra@ttl{#2}}
+\newcommand{\lra@parse}[2]{%
+  \def\lra@eye{#2}%
+  \def\lra@ttl{#1}%
+  \in@{: }{#1}%
+  \ifin@
+    \lra@splitcolon#1\relax
+  \fi
+}
+\def\lra@titleget#1{%
+  \in@{: }{#1}%
+  \ifin@
+    \lra@splitcolon#1\relax
+    \lra@ttl
+  \else
+    #1%
+  \fi
+}
+\newcommand{\lra@titleof}[1]{\expandafter\lra@titleget\expandafter{#1}}
+
+% ------------------------------------------------------------
+% Metadata-driven breadcrumb renderers
+% ------------------------------------------------------------
+\newcommand{\LraBreadcrumb}{%
+  \ifdim\linewidth<\lra@threshold
+    \LraCompactBreadcrumb
+  \else
+    \lra@chevron
+  \fi
+}
+
+\newcommand{\lra@chevron}{%
+  \lra@levelnum{\lra@current}%
+  \begingroup
+  \pgfmathsetmacro{\lra@d}{8}%
+  \pgfmathsetmacro{\lra@W}{\linewidth/1pt}%
+  \pgfmathsetmacro{\lra@w}{(\lra@W-\lra@d)/\lra@N}%
+  \pgfmathsetmacro{\lra@h}{46}%
+  \noindent\begin{tikzpicture}[x=1pt,y=1pt]
+    \foreach \i in {1,...,\lra@N}{\lra@segment{\i}}
+  \end{tikzpicture}%
+  \endgroup
+}
+
+\newcommand{\lra@segment}[1]{%
+  \pgfmathsetmacro{\xl}{(#1-1)*\lra@w}%
+  \pgfmathsetmacro{\xr}{\xl+\lra@w}%
+  \pgfmathsetmacro{\xrt}{\xr+\lra@d}%
+  \pgfmathsetmacro{\xld}{\xl+\lra@d}%
+  \pgfmathsetmacro{\ym}{\lra@h/2}%
+  \pgfmathsetmacro{\cx}{\xl+\lra@w/2+\lra@d/2}%
+  \pgfmathsetmacro{\tw}{\lra@w-\lra@d-4}%
+  \ifnum#1=1 \def\lc{Series}\let\ld\lra@series\let\lico\lraicon@series\def\lkw{Series}\fi
+  \ifnum#1=2 \def\lc{Volume}\let\ld\lra@volume\let\lico\lraicon@volume\def\lkw{Volume}\fi
+  \ifnum#1=3 \def\lc{Book}\let\ld\lra@book\let\lico\lraicon@book\def\lkw{Book}\fi
+  \ifnum#1=4 \def\lc{Chapter}\let\ld\lra@chapter\let\lico\lraicon@chapter\def\lkw{Chapter}\fi
+  \ifnum#1=5 \def\lc{Section}\let\ld\lra@section\let\lico\lraicon@section\def\lkw{Section}\fi
+  \ifnum#1=6 \def\lc{Topic}\let\ld\lra@topic\let\lico\lraicon@topic\def\lkw{Topic}\fi
+  \edef\lfull{lra\lc Full}%
+  \edef\ltint{lra\lc Tint}%
+  \ifnum#1=1
+    \edef\lra@poly{(\xl,0)--(\xr,0)--(\xrt,\ym)--(\xr,\lra@h)--(\xl,\lra@h)--cycle}%
+  \else
+    \edef\lra@poly{(\xl,0)--(\xr,0)--(\xrt,\ym)--(\xr,\lra@h)--(\xl,\lra@h)--(\xld,\ym)--cycle}%
+  \fi
+  \ifnum#1=\lra@N
+    \expandafter\fill\expandafter[\lfull]\lra@poly;%
+    \def\ltxt{white}%
+    \let\lemph\bfseries
+  \else
+    \expandafter\fill\expandafter[\ltint]\lra@poly;%
+    \edef\ltxt{\lfull}%
+    \let\lemph\mdseries
+  \fi
+  \expandafter\lra@parse\expandafter{\ld}{\lkw}%
+  \node[anchor=center,align=center,text=\ltxt,text width=\tw pt] at (\cx,\ym){%
+    \iflra@icons\lico\\[-1.5pt]\fi
+    {\scriptsize\sffamily\textls[60]{\MakeUppercase{\lra@eye}}}\\[-1pt]
+    {\lemph\footnotesize\lra@ttl}};%
+}
+
+\newcommand{\LraCompactBreadcrumb}{%
+  \lra@levelnum{\lra@current}%
+  \begingroup\footnotesize\sffamily
+  \def\sep{\;\textcolor{lraChapterFull}{\(\succ\)}\;}%
+  \newcount\lra@compactprinted
+  \lra@compactprinted=0
+  \let\lra@lastcompacttitle\@empty
+  \ifnum\lra@N>0 \lra@compactlevel{Series}{\lra@series}{lraSeriesFull}{}\fi
+  \ifnum\lra@N>1 \lra@compactlevel{Volume}{\lra@volume}{lraVolumeFull}{}\fi
+  \ifnum\lra@N>2 \lra@compactlevel{Book}{\lra@book}{lraBookFull}{}\fi
+  \ifnum\lra@N>3 \lra@compactlevel{Chapter}{\lra@chapter}{lraChapterFull}{}\fi
+  \ifnum\lra@N>4 \lra@compactlevel{Section}{\lra@section}{lraSectionFull}{}\fi
+  \ifnum\lra@N>5 \lra@compactlevel{Topic}{\lra@topic}{lraTopicFull}{\bfseries}\fi
+  \endgroup
+}
+\newcommand{\LraFooterBreadcrumb}{\LraCompactBreadcrumb}
+
+\newcommand{\lra@compactlevel}[4]{%
+  \expandafter\lra@parse\expandafter{#2}{#1}%
+  \ifx\lra@ttl\lra@lastcompacttitle
+  \else
+    \ifnum\lra@compactprinted>0 \sep\fi
+    \textcolor{#3}{{#4\lra@ttl}}%
+    \advance\lra@compactprinted by 1%
+    \let\lra@lastcompacttitle\lra@ttl
+  \fi
+}
+
+\newcommand{\LraEnableFooterBreadcrumb}{%
+  \pagestyle{fancy}%
+  \fancyhf{}%
+  \fancyfoot[L]{\LraFooterBreadcrumb}%
+  \fancyfoot[R]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  \fancypagestyle{plain}{%
+    \fancyhf{}%
+    \fancyfoot[L]{\LraFooterBreadcrumb}%
+    \fancyfoot[R]{\thepage}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+  }%
+}
+
+\AtBeginDocument{%
+  \let\lra@orig@section\section
+  \RenewDocumentCommand{\section}{s o m}{%
+    \IfBooleanTF{#1}{%
+      \IfNoValueTF{#2}{\lra@orig@section*{#3}}{\lra@orig@section*[#2]{#3}}%
+    }{%
+      \lrameta{section={#3}, topic={}, current=section}%
+      \IfNoValueTF{#2}{\lra@orig@section{#3}}{\lra@orig@section[#2]{#3}}%
+    }%
+  }%
+  \let\lra@orig@subsection\subsection
+  \RenewDocumentCommand{\subsection}{s o m}{%
+    \IfBooleanTF{#1}{%
+      \IfNoValueTF{#2}{\lra@orig@subsection*{#3}}{\lra@orig@subsection*[#2]{#3}}%
+    }{%
+      \lrameta{topic={#3}, current=topic}%
+      \IfNoValueTF{#2}{\lra@orig@subsection{#3}}{\lra@orig@subsection[#2]{#3}}%
+    }%
+  }%
+}
+
+% ------------------------------------------------------------
+% Legacy chapter breadcrumb compatibility
+% ------------------------------------------------------------
 \tcbset{
   breadcrumbstyle/.style={
     colback=breadcrumb, colframe=breadcrumbborder, coltitle=breadcrumbtitle,
@@ -44,3 +347,5 @@
   This chapter moves the development from #1 to #2. To get there, it studies: #3.%
   \end{exposition}%
 }
+
+\makeatother
