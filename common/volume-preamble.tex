@@ -23,8 +23,77 @@
 
 % ── Hyperlinks and cross-references ───────────────────────
 \usepackage{hyperref}
+\usepackage{xr-hyper}
+\usepackage{xstring}
 \usepackage[nameinlink,capitalize,noabbrev]{cleveref}
 \usepackage{bookmark}
+
+\makeatletter
+\newcommand{\LRAExternalDocumentIfExists}[1]{%
+  \begingroup
+  \edef\LRA@candidate{#1}%
+  \edef\LRA@current{build/\jobname}%
+  \IfStrEq{\LRA@candidate}{\LRA@current}{}{%
+    \IfFileExists{#1.aux}{\externaldocument{#1}}{}%
+  }%
+  \endgroup
+}
+\newcommand{\LRAExternalVolumeDocumentIfExists}[2]{%
+  \IfBeginWith{\jobname}{#1}{}{%
+    \LRAExternalDocumentIfExists{#2}%
+  }%
+}
+\newcommand{\LRAExternalRootDocumentIfExists}[2]{%
+  \IfStrEq{\jobname}{#1}{}{%
+    \LRAExternalDocumentIfExists{#2}%
+  }%
+}
+\newcommand{\LRALoadExternalReferences}{%
+  % Cross-volume references use sibling volume-level aux files when present.
+  \LRAExternalVolumeDocumentIfExists{volume-i}{../lra-volume-i/build/volume-i}%
+  \LRAExternalVolumeDocumentIfExists{volume-i}{/lra-repos/lra-volume-i/build/volume-i}%
+  \LRAExternalVolumeDocumentIfExists{volume-ii}{../lra-volume-ii/build/volume-ii}%
+  \LRAExternalVolumeDocumentIfExists{volume-ii}{/lra-repos/lra-volume-ii/build/volume-ii}%
+  \LRAExternalVolumeDocumentIfExists{volume-iii}{../lra-volume-iii/build/volume-iii}%
+  \LRAExternalVolumeDocumentIfExists{volume-iii}{/lra-repos/lra-volume-iii/build/volume-iii}%
+  \LRAExternalVolumeDocumentIfExists{volume-iv}{../lra-volume-iv/build/volume-iv}%
+  \LRAExternalVolumeDocumentIfExists{volume-iv}{/lra-repos/lra-volume-iv/build/volume-iv}%
+  \LRAExternalVolumeDocumentIfExists{volume-v}{../lra-volume-v/build/volume-v}%
+  \LRAExternalVolumeDocumentIfExists{volume-v}{/lra-repos/lra-volume-v/build/volume-v}%
+  \LRAExternalVolumeDocumentIfExists{volume-vi}{../lra-volume-vi/build/volume-vi}%
+  \LRAExternalVolumeDocumentIfExists{volume-vi}{/lra-repos/lra-volume-vi/build/volume-vi}%
+  \LRAExternalVolumeDocumentIfExists{volume-vii}{../lra-volume-vii/build/volume-vii}%
+  \LRAExternalVolumeDocumentIfExists{volume-vii}{/lra-repos/lra-volume-vii/build/volume-vii}%
+  \LRAExternalVolumeDocumentIfExists{volume-viii}{../lra-volume-viii/build/volume-viii}%
+  \LRAExternalVolumeDocumentIfExists{volume-viii}{/lra-repos/lra-volume-viii/build/volume-viii}%
+  % Same-volume book references use local book aux files when present.
+  \LRAExternalRootDocumentIfExists{volume-i-set-theory}{build/volume-i-set-theory}%
+  \LRAExternalRootDocumentIfExists{volume-i-mathematical-logic-and-proof}{build/volume-i-mathematical-logic-and-proof}%
+  \LRAExternalRootDocumentIfExists{volume-i-foundational-geometry}{build/volume-i-foundational-geometry}%
+  \LRAExternalRootDocumentIfExists{volume-ii-discrete-number-systems}{build/volume-ii-discrete-number-systems}%
+  \LRAExternalRootDocumentIfExists{volume-ii-the-continuum}{build/volume-ii-the-continuum}%
+  \LRAExternalRootDocumentIfExists{volume-iii-bounds-sequences-and-series}{build/volume-iii-bounds-sequences-and-series}%
+  \LRAExternalRootDocumentIfExists{volume-iii-continuity}{build/volume-iii-continuity}%
+  \LRAExternalRootDocumentIfExists{volume-iii-differentiation}{build/volume-iii-differentiation}%
+  \LRAExternalRootDocumentIfExists{volume-iii-integration}{build/volume-iii-integration}%
+  \LRAExternalRootDocumentIfExists{volume-iv-mathematical-spaces}{build/volume-iv-mathematical-spaces}%
+  \LRAExternalRootDocumentIfExists{volume-v-measure-theory}{build/volume-v-measure-theory}%
+  \LRAExternalRootDocumentIfExists{volume-v-probability}{build/volume-v-probability}%
+  \LRAExternalRootDocumentIfExists{volume-v-complex-analysis}{build/volume-v-complex-analysis}%
+  \LRAExternalRootDocumentIfExists{volume-v-functional-analysis}{build/volume-v-functional-analysis}%
+  \LRAExternalRootDocumentIfExists{volume-vi-algebra}{build/volume-vi-algebra}%
+  \LRAExternalRootDocumentIfExists{volume-vi-linear-algebra}{build/volume-vi-linear-algebra}%
+  \LRAExternalRootDocumentIfExists{volume-vi-lattice-and-order-theory}{build/volume-vi-lattice-and-order-theory}%
+  \LRAExternalRootDocumentIfExists{volume-vii-proof-theory}{build/volume-vii-proof-theory}%
+  \LRAExternalRootDocumentIfExists{volume-vii-model-theory}{build/volume-vii-model-theory}%
+  \LRAExternalRootDocumentIfExists{volume-vii-type-theory}{build/volume-vii-type-theory}%
+  \LRAExternalRootDocumentIfExists{volume-vii-category-theory}{build/volume-vii-category-theory}%
+  \LRAExternalRootDocumentIfExists{volume-vii-lambda-calculus}{build/volume-vii-lambda-calculus}%
+  \LRAExternalRootDocumentIfExists{volume-viii-numerical-foundations}{build/volume-viii-numerical-foundations}%
+  \LRAExternalRootDocumentIfExists{volume-viii-applied-methods}{build/volume-viii-applied-methods}%
+}
+\AtBeginDocument{\LRALoadExternalReferences}
+\makeatother
 
 % ── cleveref configuration ────────────────────────────────
 \crefname{theorem}{Theorem}{Theorems}
