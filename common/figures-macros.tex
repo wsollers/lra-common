@@ -1,0 +1,107 @@
+% =========================================================
+% common/figures-macros.tex
+% Shared TikZ styles and helper macros for book figures.
+% =========================================================
+
+\usetikzlibrary{arrows.meta,calc,backgrounds,decorations.pathreplacing,
+                positioning,fadings}
+
+% Structural atlas palette.
+\definecolor{atlaspaper}{HTML}{F4EFE4}
+\definecolor{atlasink}{HTML}{33312E}
+\definecolor{atlasgray}{HTML}{9A958C}
+
+\definecolor{atlasblue}{HTML}{2E6F9E}
+\definecolor{atlasgreen}{HTML}{4C8C3F}
+\definecolor{atlasred}{HTML}{C0473B}
+\definecolor{atlasgold}{HTML}{D69A2A}
+\definecolor{atlasmagenta}{HTML}{B84A86}
+\definecolor{atlasteal}{HTML}{2A9D9A}
+\definecolor{atlasorange}{HTML}{D17A2E}
+\definecolor{atlasconegreen}{HTML}{6BA84F}
+
+\tikzset{
+  atlas/.style={
+    % Embedded book figures inherit the page background.
+    % show background rectangle,
+    % background rectangle/.style={fill=atlaspaper, rounded corners=2pt},
+  },
+  atlas axes/.style={
+    atlasink, line width=0.7pt, line cap=round,
+    -{Stealth[length=4pt,width=3pt]},
+  },
+  atlas curve/.style={
+    line width=1.5pt, line cap=round, line join=round,
+  },
+  atlas probe/.style={
+    line width=1.1pt, line cap=round,
+  },
+  dropline/.style={
+    atlasgray, line width=0.6pt, dash pattern=on 2pt off 2pt,
+  },
+  atlas dot/.style={
+    fill=atlasink, draw=atlaspaper, line width=0.4pt,
+    circle, inner sep=0pt, minimum size=4.2pt,
+  },
+  atlas label/.style={atlasink, font=\normalsize},
+}
+
+\makeatletter
+\pgfkeys{
+  /glow/.cd,
+  color/.initial=atlasblue,
+  domain/.initial=0:1,
+  axis/.initial=0,
+  top/.initial=6,
+  expr/.initial={\x},
+  samples/.initial=100,
+  stroke/.initial=1.5pt,
+  fillmax/.initial=24,
+  fillmin/.initial=2,
+  halo/.initial=5pt,
+}
+\newcommand{\glowcurve}[1]{%
+  \begingroup
+  \pgfkeys{/glow/.cd,#1}%
+  \edef\gl@color{\pgfkeysvalueof{/glow/color}}%
+  \edef\gl@domain{\pgfkeysvalueof{/glow/domain}}%
+  \edef\gl@axis{\pgfkeysvalueof{/glow/axis}}%
+  \edef\gl@top{\pgfkeysvalueof{/glow/top}}%
+  \edef\gl@samples{\pgfkeysvalueof{/glow/samples}}%
+  \edef\gl@stroke{\pgfkeysvalueof{/glow/stroke}}%
+  \edef\gl@fmax{\pgfkeysvalueof{/glow/fillmax}}%
+  \edef\gl@fmin{\pgfkeysvalueof{/glow/fillmin}}%
+  \edef\gl@halo{\pgfkeysvalueof{/glow/halo}}%
+  \def\gl@expr{\pgfkeysvalueof{/glow/expr}}%
+  \expandafter\gl@splitdomain\gl@domain\@nil
+  \begin{scope}
+    \clip (\gl@a,\gl@axis)
+      -- plot[domain=\gl@domain,samples=\gl@samples,smooth] (\x,{\gl@expr})
+      -- (\gl@b,\gl@axis) -- cycle;
+    \shade[top color=\gl@color!\gl@fmax, bottom color=\gl@color!\gl@fmin]
+      (\gl@a,\gl@axis) rectangle (\gl@b,\gl@top);
+  \end{scope}
+  \draw[\gl@color, line width=\gl@halo, opacity=0.10, line cap=round]
+    plot[domain=\gl@domain,samples=\gl@samples,smooth] (\x,{\gl@expr});
+  \draw[\gl@color, line width=0.55\gl@halo, opacity=0.22, line cap=round]
+    plot[domain=\gl@domain,samples=\gl@samples,smooth] (\x,{\gl@expr});
+  \draw[\gl@color, atlas curve, line width=\gl@stroke]
+    plot[domain=\gl@domain,samples=\gl@samples,smooth] (\x,{\gl@expr});
+  \endgroup
+}
+\def\gl@splitdomain#1:#2\@nil{\def\gl@a{#1}\def\gl@b{#2}}
+\makeatother
+
+\newcommand{\glowstroke}[3]{%
+  \draw[#1, line width=5pt, opacity=0.10, line cap=round]
+    plot[domain=#2,samples=100,smooth] (\x,{#3});
+  \draw[#1, line width=2.75pt, opacity=0.18, line cap=round]
+    plot[domain=#2,samples=100,smooth] (\x,{#3});
+  \draw[#1, atlas curve]
+    plot[domain=#2,samples=100,smooth] (\x,{#3});
+}
+
+\newcommand{\atlascaption}[3]{%
+  \shortstack{\scshape\footnotesize\color{atlasink}%
+    Figure~#1.\ \textbf{#2:}\\[1pt]\textbf{#3}}%
+}
