@@ -10,7 +10,7 @@ environments that are shared across all volume repositories.
 ```
 common/
   preamble.tex         — page layout, fonts, AMS packages
-  boxes.tex            — tcolorbox, TikZ, blueprint macros, dependency figure styles
+  boxes.tex            — statement boxes, pedagogical boxes, TikZ, blueprint macros, dependency figure styles
   colors.tex           — all color definitions (theorem palette, definition palette, etc.)
   environments.tex     — theorem-like environments (numbered and unnumbered)
   macros.tex           — proof macros, flash macros, citation helpers
@@ -18,8 +18,22 @@ common/
   exercise-format.tex  — exercise record stubs and tag macros
 images/                — shared figures and images
 scripts/
-  check_bibliography.py — legacy duplicate check and source lookup helper
+  check_bibliography.py — duplicate check and source lookup helper
 ```
+
+## Shared box families
+
+`common/boxes.tex` defines the shared semantic wrappers used by the volumes:
+
+- formal statement boxes: `definitionbox`, `axiombox`, `theorembox`,
+  `lemmabox`, `propositionbox`, and `corollarybox`;
+- topic and navigation boxes: `topicbox`, toolkit boxes, blueprint boxes, and
+  dependency figure boxes;
+- note-side pedagogical boxes: `restatementbox` for teaching restatements and
+  `derivationbox` for explanatory derivations.
+
+Governance documents in `lra-governance/docs/governance/` define when each box
+is valid and how validators interpret it.
 
 ## Bibliography workflow
 

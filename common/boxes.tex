@@ -300,6 +300,38 @@ depedgelab/.style={
   before skip=8pt, after skip=8pt
 }
 
+\newtcolorbox{restatementbox}[1]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=black!18,
+  arc=2pt,
+  boxrule=0.45pt,
+  title={\textbf{#1}},
+  fonttitle=\bfseries,
+  coltitle=black,
+  colbacktitle=black!5,
+  boxed title style={boxrule=0.45pt, arc=2pt, colframe=black!18, colback=black!5},
+  left=8pt, right=8pt, top=8pt, bottom=6pt,
+  before skip=8pt, after skip=8pt
+}
+
+\newtcolorbox{derivationbox}[1]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=black!18,
+  arc=2pt,
+  boxrule=0.45pt,
+  title={\textbf{#1}},
+  fonttitle=\bfseries,
+  coltitle=black,
+  colbacktitle=black!5,
+  boxed title style={boxrule=0.45pt, arc=2pt, colframe=black!18, colback=black!5},
+  left=8pt, right=8pt, top=8pt, bottom=6pt,
+  before skip=8pt, after skip=8pt
+}
+
 \NewDocumentEnvironment{exposition}{}%
   {\par\smallskip\noindent\ignorespaces}%
   {\par\smallskip}
